@@ -1,6 +1,7 @@
 import functools
-import sys
+import os
 from collections import OrderedDict
+import psutil
 import requests
 
 
@@ -36,8 +37,10 @@ def cache(max_limit=64):
 def mem_count(f):
     @functools.wraps(f)
     def internal(*args, **kwargs):
+        start = psutil.Process(os.getpid()).memory_info().vms
         result = f(*args, **kwargs)
-        print(f'Memory quantity for action: {f.__name__}, bytes: {sys.getsizeof(result)}')
+        finish = psutil.Process(os.getpid()).memory_info().vms
+        print(f'Memory usage: {(finish - start) / (1024 ** 2)} MB')
         return result
     return internal
 
@@ -54,17 +57,18 @@ def fetch_url(url, first_n=100):
         return None
 
 
-fetch_url('https://www.google.com')
-fetch_url('https://www.google.com')
-fetch_url('https://www.google.com')
-fetch_url('https://www.dou.ua')
-fetch_url('https://www.dou.ua')
-fetch_url('https://www.dou.ua')
-fetch_url('https://www.youtube.com')
-fetch_url('https://www.youtube.com')
-fetch_url('https://www.youtube.com')
-fetch_url('https://www.youtube.com')
-fetch_url('https://www.youtube.com')
-fetch_url('https://ithillel.ua')
-fetch_url('https://ithillel.ua')
-fetch_url('https://ithillel.ua')
+if __name__ == '__main__':
+    fetch_url('https://www.google.com')
+    fetch_url('https://www.google.com')
+    fetch_url('https://www.google.com')
+    fetch_url('https://www.dou.ua')
+    fetch_url('https://www.dou.ua')
+    fetch_url('https://www.dou.ua')
+    fetch_url('https://www.youtube.com')
+    fetch_url('https://www.youtube.com')
+    fetch_url('https://www.youtube.com')
+    fetch_url('https://www.youtube.com')
+    fetch_url('https://www.youtube.com')
+    fetch_url('https://ithillel.ua')
+    fetch_url('https://ithillel.ua')
+    fetch_url('https://ithillel.ua')
