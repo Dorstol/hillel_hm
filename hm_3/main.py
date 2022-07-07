@@ -11,22 +11,21 @@ fake = faker.Faker('uk_UA')
 app = Flask(__name__)
 
 
-@app.route("/generate_students")
+@app.route("/generate_students", methods=['GET'])
 @use_kwargs(
     {
         "count": fields.Int(
-            validate=[validate.Range(max=1000)]
+            missing=1,
+            validate=[validate.Range(min=1, max=1000)]
         ),
     },
     location='query'
 )
-def generate_students(count):
+def generate_students(count: int):
     """
     Generate students and save them to csv file
     return: csv file with students data
     """
-    count = request.args.get('count')
-    count = int(count)
     students = []
     for i in range(count):
         students.append(
@@ -46,16 +45,25 @@ def generate_students(count):
 
 
 @app.route("/bitcoin_price")
-def get_bitcoin_value():
+@use_kwargs(
+    {
+        'currency': fields.Str(
+            missing='USD',
+        ),
+        'count': fields.Int(
+            missing=1,
+        )
+    },
+    location='query'
+)
+def get_bitcoin_value(currency, count):
     """
     Get the current bitcoin price from the API
     return: price in selected currency
     """
-    currency = request.args.get('currency', 'USD')
-    count = request.args.get('count', '1')
-    count = int(count)
     data = requests.get('https://bitpay.com/api/rates').json()
     get_currency_symbol = requests.get('https://bitpay.com/currencies').json()['data']
+
 
     # find currency symbol by currency name
     for i in range(len(get_currency_symbol)):
@@ -69,7 +77,7 @@ def get_bitcoin_value():
             return {
                 'price': str(data[i]['rate']) + currency_symbol,
                 'converted price': str(round(count / data[i]['rate'], 2)) + get_currency_symbol[0]['symbol']
-                    }
+            }
 
 
 if __name__ == "__main__":
