@@ -24,14 +24,14 @@ def format_records(price: list, country) -> str:
         string_to_return += f"""
             <tr>
                 <td>{price[i][0]}</td>
-                <td>{country}</td>
+                <td>{country[i]}</td>
             </tr>
         """
     return f"""
     {styles}
     <table>
           <tr>
-            <th>NewPrice</th>
+            <th>Total Price</th>
             <th>Country</th>
           </tr>
             {string_to_return}

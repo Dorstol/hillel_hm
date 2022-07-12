@@ -1,3 +1,4 @@
+from math import modf
 from flask import Flask
 from webargs import fields
 from webargs.flaskparser import use_kwargs
@@ -24,16 +25,26 @@ def order_price(country):
     """
     if country:
         get_sum_of_sales_by_country = f"""
-        SELECT UnitPrice * Quantity AS sum_of_sales 
-        FROM invoice_items 
-        INNER JOIN invoices ON invoice_items.InvoiceId = invoices.InvoiceId 
-        WHERE invoices.BillingCountry = '{country}'"""
+        SELECT (UnitPrice * sum(Quantity)) AS TotalSales
+        FROM invoice_items
+        INNER JOIN invoices ON invoice_items.InvoiceId = invoices.InvoiceId
+        WHERE invoices.BillingCountry = '{country}'
+        GROUP BY invoices.BillingCountry"""
+
         price_by_country = execute_query(get_sum_of_sales_by_country)
-        return format_records(price_by_country, country)
+        return format_records(price_by_country, [country])
+
     else:
-        query_for_new_price = 'SELECT UnitPrice * Quantity AS NewPrice FROM invoice_items'
+        query_for_new_price = """
+        SELECT (UnitPrice * sum(Quantity)) AS TotalSales, invoices.BillingCountry AS Country
+        FROM invoice_items
+        INNER JOIN invoices ON invoice_items.InvoiceId = invoices.InvoiceId
+        GROUP BY invoices.BillingCountry
+        """
         new_price = execute_query(query_for_new_price)
-        return format_records(new_price, '---')
+        country = [country[1] for country in new_price]
+        print(country)
+        return format_records(new_price, country)
 
 
 @app.route('/get_all_info_about_track')
@@ -49,7 +60,14 @@ def get_all_info_about_track(track):
     :param track:
     :return: all info about the track.
     """
-    query = f"""SELECT tracks.Name, COMPOSER, albums.Title AS AlbumTitle, artists.Name AS Artist, genres.Name AS Genre, Milliseconds, media_types.Name AS MediaType, UnitPrice
+    query = f"""
+    SELECT tracks.Name, COMPOSER, 
+    albums.Title AS AlbumTitle, 
+    artists.Name AS Artist, 
+    genres.Name AS Genre, 
+    Milliseconds, 
+    media_types.Name AS MediaType, 
+    UnitPrice
     FROM tracks
     INNER JOIN albums
     ON tracks.AlbumId = albums.AlbumId
@@ -63,6 +81,20 @@ def get_all_info_about_track(track):
 
     track_info = execute_query(query)
     return format_tracks(track_info)
+
+
+@app.route("/total_tracks_time")
+def get_total_track_time():
+    """
+    This function is used to get the total time of all tracks.
+    :return: the total time of all tracks.
+    """
+    query = 'SELECT sum(Milliseconds) FROM tracks;'
+    time_of_tracks = execute_query(query)
+    hours = round(int(time_of_tracks[0][0]) / 3600000)
+    minutes = round(modf(hours)[0] * 60)
+
+    return f"<h1>Total tracks time: {hours} hours {minutes} minutes</h1>"
 
 
 if __name__ == '__main__':
