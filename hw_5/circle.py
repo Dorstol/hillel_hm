@@ -5,10 +5,7 @@ class Circle:
         self.radius = radius
 
     def contains(self, instance):
-        if instance.x ** 2 + instance.y ** 2 <= self.radius ** 2:
-            return True
-        else:
-            return False
+        return (instance.x - self.x)**2 + (instance.y - self.y)**2 <= self.radius**2
 
 
 class Point:
@@ -17,6 +14,7 @@ class Point:
         self.y = y
 
 
-circle = Circle(10, 11, 5)
-point = Point(2, 2)
-print(circle.contains(point))
+if __name__ == '__main__':
+    circle = Circle(5, 5, 5)
+    point = Point(2, 2)
+    print(circle.contains(point))
