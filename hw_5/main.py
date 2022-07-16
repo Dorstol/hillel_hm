@@ -20,6 +20,9 @@ def stats_by_city(genre):
     Return the city where most listen to this genre of music
     return: str with information about the city
     """
+    if genre == 'Opera':
+        return '<h1>Opera is not a available genre, please choose another one.</h1>'
+
     query_for_genre = "SELECT NAME FROM genres"
     query_for_city = """
     SELECT BillingCity FROM invoices
