@@ -21,6 +21,7 @@ if __name__ == '__main__':
     assert (new_format("100000") == "100.000")
     assert (new_format("10000") == "10.000")
     assert (new_format("0") == "0")
+    print("Success")
 
 
 def is_pangram(s):
