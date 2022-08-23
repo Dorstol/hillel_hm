@@ -1,10 +1,17 @@
 import re
+import numpy as np
 from string import ascii_lowercase
 
 
+# def new_format(string):
+#     string = int(string)
+#     return str(f'{string:,}'.format(string).replace(',', '.'))
+
+
 def new_format(string):
-    string = int(string)
-    return str(f'{string:,}'.format(string).replace(',', '.'))
+    data = list(string)
+    [data.insert(i, ".") for i in range(len(data), 0, -3)]
+    return ''.join(data).strip(".")
 
 
 if __name__ == '__main__':
@@ -16,7 +23,6 @@ if __name__ == '__main__':
     assert (new_format("0") == "0")
 
 
-# 1. https://www.codewars.com/kata/545cedaa9943f7fe7b000048
 def is_pangram(s):
     sentence = s
     sentence = re.sub('[^A-Za-z0-9]+', '', sentence).lower()
@@ -35,10 +41,6 @@ def is_pangram(s):
         return False
 
 
-# 2. https://www.codewars.com/kata/5951d30ce99cf2467e000013
-import numpy as np
-
-
 def pythagorean_triple(integers):
     max_value = np.max(integers)
     integers.remove(max_value)
@@ -49,7 +51,6 @@ def pythagorean_triple(integers):
         return False
 
 
-# 3. https://www.codewars.com/kata/554b4ac871d6813a03000035
 def high_and_low(numbers):
     temp = sorted([int(i) for i in numbers.split()])
     print(temp)
@@ -58,12 +59,10 @@ def high_and_low(numbers):
     return numbers
 
 
-# 4. https://www.codewars.com/kata/541c8630095125aba6000c00
 def digital_root(n):
     return (n - 1) % 9 + 1 if n else 0
 
 
-# 5. https://www.codewars.com/kata/5526fc09a1bbd946250002dc
 def find_outlier(integers):
     odd_int = []
     even_int = []
