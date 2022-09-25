@@ -30,32 +30,79 @@ def formatted_name(first_name, last_name, middle_name=''):
 
 
 class TestFormatName(unittest.TestCase):
-    def test_format_name_equal(self):
-        self.assertEqual(formatted_name("Oleh", "sofronov"), "Oleh Sofronov")
-        self.assertEqual(formatted_name("oleh", "Sofronov"), "Oleh Sofronov")
-        self.assertEqual(formatted_name("oleh", "sofronov"), "Oleh Sofronov")
-        self.assertEqual(formatted_name("oleh", "sofronov", "Yurievich"), "Oleh Yurievich Sofronov")
 
-    def test_format_name_raiseerror(self):
-        self.assertRaises(TypeError, formatted_name('1', 2))
-        self.assertRaises(TypeError, formatted_name(1, 2))
-        self.assertRaises(TypeError, formatted_name('oleh'))
-        self.assertRaises(TypeError, formatted_name())
+    def test_without_params(self):
+        with self.assertRaises(TypeError):
+            formatted_name()
+
+    def test_empty_params(self):
+        self.assertEqual(formatted_name("", ""), " ")
+
+    def test_different_register_params(self):
+        self.assertEqual(formatted_name("OlEh", "sOfRoNoV"), "Oleh Sofronov")
+
+    def test_wrong_params(self):
+        with self.assertRaises(TypeError):
+            formatted_name(31, 10)
+
+    def test_with_1_param(self):
+        with self.assertRaises(TypeError):
+            formatted_name("Oleh")
+
+    def test_with_2_params(self):
+        self.assertEqual(formatted_name("Oleh", "Sofronov"), "Oleh Sofronov")
+
+    def test_with_3_params(self):
+        self.assertEqual(formatted_name("Oleh", "Sofronov", "Yurievich"), "Oleh Yurievich Sofronov")
 
 
 class TestFibonacci(unittest.TestCase):
 
     def setUp(self):
-        self.fibonacci_instance = Fibonacci()
+        self.fibonacci = Fibonacci()
+        self.fibonacci_test_data = [
+            [1, 1], [2, 1], [3, 2], [4, 3],
+            [5, 5], [6, 8], [7, 13], [8, 21],
+            [9, 34], [10, 55], [11, 89], [12, 144]
+        ]
 
-    def test_fibonacci(self):
-        self.assertEqual(self.fibonacci_instance(10), 55)
-        self.assertEqual(self.fibonacci_instance(0), 0)
-        self.assertEqual(self.fibonacci_instance(16), 987)
-        self.assertEqual(self.fibonacci_instance(8), 21)
+    def test_fibonacci_test_data(self):
+        for n, expected_number in self.fibonacci_test_data:
+            actual_number = self.fibonacci(n)
+            self.assertEqual(expected_number, actual_number)
 
-    def test_fibonacci_error(self):
-        self.assertRaises(TypeError, self.fibonacci_instance())
-        self.assertRaises(TypeError, self.fibonacci_instance(21, 32))
-        self.assertRaises(TypeError, self.fibonacci_instance('Hello World!'))
-        self.assertRaises(TypeError, self.fibonacci_instance(True))
+    def test_first_fibonacci_number_is_1(self):
+        x = self.fibonacci(1)
+        self.assertEqual(1, x)
+
+    def test_second_fibonacci_number_is_1(self):
+        x = self.fibonacci(2)
+        self.assertEqual(1, x)
+
+    def test_5th_fibonacci_number_is_5(self):
+        x = self.fibonacci(5)
+        self.assertEqual(5, x)
+
+    def test_fibonacci_empty_param(self):
+        with self.assertRaises(TypeError):
+            self.fibonacci()
+
+    def test_fibonacci_wrong_param(self):
+        with self.assertRaises(ValueError):
+            self.fibonacci("test")
+
+    def test_fibonacci_negative_param(self):
+        with self.assertRaises(ValueError):
+            self.fibonacci(-322)
+
+    def test_fibonacci_float_param(self):
+        with self.assertRaises(ValueError):
+            self.fibonacci(13.2)
+
+    def test_fibonacci_with_2_params(self):
+        with self.assertRaises(TypeError):
+            self.fibonacci(1, 2)
+
+
+if __name__ == "__main__":
+    unittest.main()
